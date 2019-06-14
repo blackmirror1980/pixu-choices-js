@@ -29,7 +29,7 @@ export default class List {
 
     // eslint-disable-next-line no-extra-boolean-cast
     if(!!OverlayScrollbars) {
-      return !!OverlayScrollbars(this.element) || null;
+      return OverlayScrollbars(this.element) || null;
     }
 
     return null;
