@@ -5,14 +5,14 @@
 // TypeScript Version: 2.6.2
 
 // Choices Namespace
-namespace Types {
+export declare namespace Types {
   type renderSelected = 'auto' | 'always';
   type dropdownPosition = 'auto' | 'top';
-  type strToEl = (str: string) => HTMLElement | HTMLInputElement | HTMLOptionElement;
+  type Template = (str: string) => HTMLElement | HTMLInputElement | HTMLOptionElement;
   type stringFunction = () => string;
   type noticeStringFunction = (value: string) => string;
   type noticeLimitFunction = (maxItemCount: number) => string;
-  type callbackOnCreateTemplates = (template: strToEl) => Templates;
+  type callbackOnCreateTemplates = (template: Template) => Templates;
 }
 
 /**
@@ -115,10 +115,10 @@ export interface Templates {
   containerInner?: () => HTMLElement;
   itemList?: () => HTMLElement;
   placeholder?: (value: string) => HTMLElement;
-  item?: (data: any) => HTMLElement;
+  item?: (globalClasses: ClassNames, choice: any, removeItemButton: boolean) => HTMLElement;
   choiceList?: () => HTMLElement;
-  choiceGroup?: (data: any) => HTMLElement;
-  choice?: (data: any) => HTMLElement;
+  choiceGroup?: (globalClasses: ClassNames, choiceGroup: any) => HTMLElement;
+  choice?: (globalClasses: ClassNames, choice: any, itemSelectText: string) => HTMLElement;
   input?: () => HTMLInputElement;
   dropdown?: () => HTMLElement;
   notice?: (label: string) => HTMLElement;
@@ -149,6 +149,8 @@ export interface ClassNames {
   item?: string;
   /** @default 'choices__item--selectable' */
   itemSelectable?: string;
+  /** @default 'choices__item--selected' */
+  itemSelected?: string;
   /** @default 'choices__item--disabled' */
   itemDisabled?: string;
   /** @default 'choices__item--choice' */
@@ -157,6 +159,8 @@ export interface ClassNames {
   placeholder?: string;
   /** @default 'choices__group' */
   group?: string;
+  /** @default 'choices__group--hidden' */
+  groupHidden?: string;
   /** @default 'choices__heading' */
   groupHeading?: string;
   /** @default 'choices__button' */
