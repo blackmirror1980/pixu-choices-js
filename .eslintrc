@@ -43,12 +43,6 @@
     "no-unused-expressions": "off",
     "no-underscore-dangle": "off",
     "consistent-return": "off",
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "trailingComma": "all"
-      }
-    ]
+    "prettier/prettier": "off"
   }
 }

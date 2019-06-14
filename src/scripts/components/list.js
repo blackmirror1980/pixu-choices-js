@@ -1,8 +1,11 @@
 import { SCROLLING_SPEED } from '../constants';
 
 export default class List {
-  constructor({ element }) {
-    Object.assign(this, { element });
+  constructor({ element, classNames }) {
+    Object.assign(this, {
+      element,
+      listElement: element.classList.contains(classNames.listScroller) ? element.querySelector(`.${classNames.list}`) : element,
+    });
 
     this.scrollPos = this.element.scrollTop;
     this.height = this.element.offsetHeight;
@@ -10,15 +13,15 @@ export default class List {
   }
 
   clear() {
-    this.element.innerHTML = '';
+    this.listElement.innerHTML = '';
   }
 
   append(node) {
-    this.element.appendChild(node);
+    this.listElement.appendChild(node);
   }
 
   getChild(selector) {
-    return this.element.querySelector(selector);
+    return this.listElement.querySelector(selector);
   }
 
   scrollToTop() {

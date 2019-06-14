@@ -9,6 +9,7 @@ export const DEFAULT_CLASSNAMES = {
   listItems: 'choices__list--multiple',
   listSingle: 'choices__list--single',
   listDropdown: 'choices__list--dropdown',
+  listScroller: 'choices__list--scroller',
   item: 'choices__item',
   itemSelectable: 'choices__item--selectable',
   itemDisabled: 'choices__item--disabled',

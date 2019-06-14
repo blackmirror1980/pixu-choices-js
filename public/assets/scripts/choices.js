@@ -414,6 +414,7 @@ var DEFAULT_CLASSNAMES = {
   listItems: 'choices__list--multiple',
   listSingle: 'choices__list--single',
   listDropdown: 'choices__list--dropdown',
+  listScroller: 'choices__list--scroller',
   item: 'choices__item',
   itemSelectable: 'choices__item--selectable',
   itemDisabled: 'choices__item--disabled',
@@ -753,7 +754,7 @@ var TEMPLATES = {
   },
   choiceList: function choiceList(globalClasses, isSelectOneElement) {
     var ariaMultiSelectable = !isSelectOneElement ? 'aria-multiselectable="true"' : '';
-    return (0, _utils.strToEl)("\n      <div\n        class=\"".concat(globalClasses.list, "\"\n        dir=\"ltr\"\n        role=\"listbox\"\n        ").concat(ariaMultiSelectable, "\n        >\n      </div>\n    "));
+    return (0, _utils.strToEl)("\n      <div\n        class=\"".concat(globalClasses.listScroller, "\">\n        <div\n          class=\"").concat(globalClasses.list, "\"\n          dir=\"ltr\"\n          role=\"listbox\"\n          ").concat(ariaMultiSelectable, "\n          >\n        </div>\n      </div>\n    "));
   },
   choiceGroup: function choiceGroup(globalClasses, data) {
     var ariaDisabled = data.disabled ? 'aria-disabled="true"' : '';
@@ -3543,10 +3544,12 @@ function () {
         type: this.passedElement.element.type
       });
       this.choiceList = new _components.List({
-        element: this._getTemplate('choiceList', this._isSelectOneElement)
+        element: this._getTemplate('choiceList', this._isSelectOneElement),
+        classNames: this.config.classNames
       });
       this.itemList = new _components.List({
-        element: this._getTemplate('itemList', this._isSelectOneElement)
+        element: this._getTemplate('itemList', this._isSelectOneElement),
+        classNames: this.config.classNames
       });
       this.dropdown = new _components.Dropdown({
         element: this._getTemplate('dropdown'),
@@ -6239,12 +6242,14 @@ var List =
 /*#__PURE__*/
 function () {
   function List(_ref) {
-    var element = _ref.element;
+    var element = _ref.element,
+        classNames = _ref.classNames;
 
     _classCallCheck(this, List);
 
     Object.assign(this, {
-      element: element
+      element: element,
+      listElement: element.classList.contains(classNames.listScroller) ? element.querySelector(".".concat(classNames.list)) : element
     });
     this.scrollPos = this.element.scrollTop;
     this.height = this.element.offsetHeight;
@@ -6254,17 +6259,17 @@ function () {
   _createClass(List, [{
     key: "clear",
     value: function clear() {
-      this.element.innerHTML = '';
+      this.listElement.innerHTML = '';
     }
   }, {
     key: "append",
     value: function append(node) {
-      this.element.appendChild(node);
+      this.listElement.appendChild(node);
     }
   }, {
     key: "getChild",
     value: function getChild(selector) {
-      return this.element.querySelector(selector);
+      return this.listElement.querySelector(selector);
     }
   }, {
     key: "scrollToTop",

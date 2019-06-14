@@ -116,11 +116,14 @@ export const TEMPLATES = {
 
     return strToEl(`
       <div
-        class="${globalClasses.list}"
-        dir="ltr"
-        role="listbox"
-        ${ariaMultiSelectable}
-        >
+        class="${globalClasses.listScroller}">
+        <div
+          class="${globalClasses.list}"
+          dir="ltr"
+          role="listbox"
+          ${ariaMultiSelectable}
+          >
+        </div>
       </div>
     `);
   },

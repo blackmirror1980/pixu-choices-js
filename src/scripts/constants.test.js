@@ -22,6 +22,7 @@ describe('constants', () => {
           'listItems',
           'listSingle',
           'listDropdown',
+          'listScroller',
           'item',
           'itemSelectable',
           'itemDisabled',

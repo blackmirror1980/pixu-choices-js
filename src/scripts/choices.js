@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import merge from 'deepmerge';
 
 import Store from './store/store';
+
 import {
   Dropdown,
   Container,
@@ -10,18 +11,22 @@ import {
   WrappedInput,
   WrappedSelect,
 } from './components';
+
 import { DEFAULT_CONFIG, EVENTS, KEY_CODES } from './constants';
 import { TEMPLATES } from './templates';
+
 import {
   addChoice,
   filterChoices,
   activateChoices,
   clearChoices,
 } from './actions/choices';
+
 import { addItem, removeItem, highlightItem } from './actions/items';
 import { addGroup } from './actions/groups';
 import { clearAll, resetTo } from './actions/misc';
 import { setIsLoading } from './actions/general';
+
 import {
   isScrolledIntoView,
   getAdjacentEl,
@@ -1702,9 +1707,7 @@ class Choices {
     const choices = this._store.choices;
     const choiceLabel = label || value;
     const choiceId = choices ? choices.length + 1 : 1;
-    const choiceElementId = `${this._baseId}-${
-      this._idNames.itemChoice
-    }-${choiceId}`;
+    const choiceElementId = `${this._baseId}-${this._idNames.itemChoice}-${choiceId}`;
 
     this._store.dispatch(
       addChoice({
@@ -1818,10 +1821,12 @@ class Choices {
 
     this.choiceList = new List({
       element: this._getTemplate('choiceList', this._isSelectOneElement),
+      classNames: this.config.classNames,
     });
 
     this.itemList = new List({
       element: this._getTemplate('itemList', this._isSelectOneElement),
+      classNames: this.config.classNames,
     });
 
     this.dropdown = new Dropdown({
