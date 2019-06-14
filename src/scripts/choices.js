@@ -1338,11 +1338,15 @@ class Choices {
       if (nextEl) {
         // We prevent default to stop the cursor moving
         // when pressing the arrow
-        if (
-          !isScrolledIntoView(nextEl, this.choiceList.element, directionInt)
-        ) {
+        const scrollbars = this.choiceList.getOverlayScrollbarsInstance();
+
+        // eslint-disable-next-line no-extra-boolean-cast
+        if(!!scrollbars) {
+          this.choiceList.scrollToChoice(nextEl, directionInt);
+        } else if (!isScrolledIntoView(nextEl, this.choiceList.element, directionInt)) {
           this.choiceList.scrollToChoice(nextEl, directionInt);
         }
+
         this._highlightChoice(nextEl);
       }
 

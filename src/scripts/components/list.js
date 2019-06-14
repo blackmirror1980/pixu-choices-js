@@ -24,8 +24,26 @@ export default class List {
     return this.listElement.querySelector(selector);
   }
 
+  getOverlayScrollbarsInstance() {
+    const OverlayScrollbars = window.OverlayScrollbars;
+
+    // eslint-disable-next-line no-extra-boolean-cast
+    if(!!OverlayScrollbars) {
+      return !!OverlayScrollbars(this.element) || null;
+    }
+
+    return null;
+  }
+
   scrollToTop() {
-    this.element.scrollTop = 0;
+    const scrollbars = this.getOverlayScrollbarsInstance();
+
+    // eslint-disable-next-line no-extra-boolean-cast
+    if(!!scrollbars) {
+      scrollbars.scroll({y : 0});
+    } else {
+      this.element.scrollTop = 0;
+    }
   }
 
   scrollToChoice(choice, direction) {
@@ -33,40 +51,47 @@ export default class List {
       return;
     }
 
-    const dropdownHeight = this.element.offsetHeight;
-    const choiceHeight = choice.offsetHeight;
-    // Distance from bottom of element to top of parent
-    const choicePos = choice.offsetTop + choiceHeight;
-    // Scroll position of dropdown
-    const containerScrollPos = this.element.scrollTop + dropdownHeight;
-    // Difference between the choice and scroll position
-    const endpoint =
-      direction > 0
-        ? this.element.scrollTop + choicePos - containerScrollPos
-        : choice.offsetTop;
+    const scrollbars = this.getOverlayScrollbarsInstance();
 
-    requestAnimationFrame(time => {
-      this._animateScroll(time, endpoint, direction);
-    });
+    // eslint-disable-next-line no-extra-boolean-cast
+    if(!!scrollbars) {
+      scrollbars.scroll({ el : choice, scroll : { y : 'ifneeded', x : 'never' } });
+    } else {
+      const dropdownHeight = this.listElement.offsetHeight;
+      const choiceHeight = choice.offsetHeight;
+      // Distance from bottom of element to top of parent
+      const choicePos = choice.offsetTop + choiceHeight;
+      // Scroll position of dropdown
+      const containerScrollPos = this.listElement.scrollTop + dropdownHeight;
+      // Difference between the choice and scroll position
+      const endpoint =
+        direction > 0
+          ? this.listElement.scrollTop + choicePos - containerScrollPos
+          : choice.offsetTop;
+
+      requestAnimationFrame(time => {
+        this._animateScroll(time, endpoint, direction);
+      });
+    }
   }
 
   _scrollDown(scrollPos, strength, endpoint) {
     const easing = (endpoint - scrollPos) / strength;
     const distance = easing > 1 ? easing : 1;
 
-    this.element.scrollTop = scrollPos + distance;
+    this.listElement.scrollTop = scrollPos + distance;
   }
 
   _scrollUp(scrollPos, strength, endpoint) {
     const easing = (scrollPos - endpoint) / strength;
     const distance = easing > 1 ? easing : 1;
 
-    this.element.scrollTop = scrollPos - distance;
+    this.listElement.scrollTop = scrollPos - distance;
   }
 
   _animateScroll(time, endpoint, direction) {
     const strength = SCROLLING_SPEED;
-    const choiceListScrollTop = this.element.scrollTop;
+    const choiceListScrollTop = this.listElement.scrollTop;
     let continueAnimation = false;
 
     if (direction > 0) {
