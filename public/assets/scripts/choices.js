@@ -3035,7 +3035,11 @@ function () {
         if (nextEl) {
           // We prevent default to stop the cursor moving
           // when pressing the arrow
-          if (!(0, _utils.isScrolledIntoView)(nextEl, this.choiceList.element, directionInt)) {
+          var scrollbars = this.choiceList.getOverlayScrollbarsInstance(); // eslint-disable-next-line no-extra-boolean-cast
+
+          if (!!scrollbars) {
+            this.choiceList.scrollToChoice(nextEl, directionInt);
+          } else if (!(0, _utils.isScrolledIntoView)(nextEl, this.choiceList.element, directionInt)) {
             this.choiceList.scrollToChoice(nextEl, directionInt);
           }
 
@@ -6272,9 +6276,28 @@ function () {
       return this.listElement.querySelector(selector);
     }
   }, {
+    key: "getOverlayScrollbarsInstance",
+    value: function getOverlayScrollbarsInstance() {
+      var OverlayScrollbars = window.OverlayScrollbars; // eslint-disable-next-line no-extra-boolean-cast
+
+      if (!!OverlayScrollbars) {
+        return !!OverlayScrollbars(this.element) || null;
+      }
+
+      return null;
+    }
+  }, {
     key: "scrollToTop",
     value: function scrollToTop() {
-      this.element.scrollTop = 0;
+      var scrollbars = this.getOverlayScrollbarsInstance(); // eslint-disable-next-line no-extra-boolean-cast
+
+      if (!!scrollbars) {
+        scrollbars.scroll({
+          y: 0
+        });
+      } else {
+        this.element.scrollTop = 0;
+      }
     }
   }, {
     key: "scrollToChoice",
@@ -6285,31 +6308,43 @@ function () {
         return;
       }
 
-      var dropdownHeight = this.element.offsetHeight;
-      var choiceHeight = choice.offsetHeight; // Distance from bottom of element to top of parent
+      var scrollbars = this.getOverlayScrollbarsInstance(); // eslint-disable-next-line no-extra-boolean-cast
 
-      var choicePos = choice.offsetTop + choiceHeight; // Scroll position of dropdown
+      if (!!scrollbars) {
+        scrollbars.scroll({
+          el: choice,
+          scroll: {
+            y: 'ifneeded',
+            x: 'never'
+          }
+        });
+      } else {
+        var dropdownHeight = this.listElement.offsetHeight;
+        var choiceHeight = choice.offsetHeight; // Distance from bottom of element to top of parent
 
-      var containerScrollPos = this.element.scrollTop + dropdownHeight; // Difference between the choice and scroll position
+        var choicePos = choice.offsetTop + choiceHeight; // Scroll position of dropdown
 
-      var endpoint = direction > 0 ? this.element.scrollTop + choicePos - containerScrollPos : choice.offsetTop;
-      requestAnimationFrame(function (time) {
-        _this._animateScroll(time, endpoint, direction);
-      });
+        var containerScrollPos = this.listElement.scrollTop + dropdownHeight; // Difference between the choice and scroll position
+
+        var endpoint = direction > 0 ? this.listElement.scrollTop + choicePos - containerScrollPos : choice.offsetTop;
+        requestAnimationFrame(function (time) {
+          _this._animateScroll(time, endpoint, direction);
+        });
+      }
     }
   }, {
     key: "_scrollDown",
     value: function _scrollDown(scrollPos, strength, endpoint) {
       var easing = (endpoint - scrollPos) / strength;
       var distance = easing > 1 ? easing : 1;
-      this.element.scrollTop = scrollPos + distance;
+      this.listElement.scrollTop = scrollPos + distance;
     }
   }, {
     key: "_scrollUp",
     value: function _scrollUp(scrollPos, strength, endpoint) {
       var easing = (scrollPos - endpoint) / strength;
       var distance = easing > 1 ? easing : 1;
-      this.element.scrollTop = scrollPos - distance;
+      this.listElement.scrollTop = scrollPos - distance;
     }
   }, {
     key: "_animateScroll",
@@ -6317,7 +6352,7 @@ function () {
       var _this2 = this;
 
       var strength = _constants.SCROLLING_SPEED;
-      var choiceListScrollTop = this.element.scrollTop;
+      var choiceListScrollTop = this.listElement.scrollTop;
       var continueAnimation = false;
 
       if (direction > 0) {
